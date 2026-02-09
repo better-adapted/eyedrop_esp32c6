@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <inttypes.h>
+#include "driver/rtc_io.h"
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -14,6 +15,10 @@
 #include "esp_system.h"
 
 #include "esp_sleep.h"
+
+#include "driver/gpio.h"
+
+#define BLINK_GPIO 15
 
 void app_main(void)
 {
@@ -43,10 +48,18 @@ void app_main(void)
            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
+    
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+    gpio_set_level(BLINK_GPIO,1);   
+    vTaskDelay(3000 / portTICK_PERIOD_MS);   
 
-    for (int i = 10; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    for (int i = 10; i >= 0; i--)
+    {
+        gpio_set_level(BLINK_GPIO,0);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+        
+        gpio_set_level(BLINK_GPIO,1);   
+        vTaskDelay(900 / portTICK_PERIOD_MS);
     }
     printf("Restarting now.\n");
     fflush(stdout);
