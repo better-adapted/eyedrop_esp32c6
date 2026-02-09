@@ -21,9 +21,9 @@ For different SoCs, the related GPIOs are:
 - ESP32-H2: 7-14
 */
 
-#define BUTTON_PIN_BITMASK 0x0003 // GPIO 0 bitmask for ext1
+#define BUTTON_PIN_BITMASK 0x0002
 
-#define GPIO_LEFT_BUTTON	0
+#define GPIO_LEFT_BUTTON	13
 #define GPIO_RIGHT_BUTTON	1
 #define GPIO_PULLUP_ENA		2
 #define GPIO_ORANGE_LED		15
@@ -56,10 +56,10 @@ void setup()
 
   pinMode(GPIO_LEFT_BUTTON,INPUT);
   pinMode(GPIO_RIGHT_BUTTON,INPUT);
-  pinMode(GPIO_PULLUP_ENA,OUTPUT);
-   pinMode(GPIO_ORANGE_LED,OUTPUT);
+  pinMode(GPIO_ORANGE_LED,OUTPUT);
 
-  digitalWrite(GPIO_PULLUP_ENA,1);
+  pinMode(GPIO_PULLUP_ENA,OUTPUT);
+  digitalWrite(GPIO_PULLUP_ENA,0);
 
   digitalWrite(GPIO_ORANGE_LED,0);
   delay(1000); //Take some time to open up the Serial Monitor
@@ -80,16 +80,16 @@ void setup()
   */
 
   //If you were to use ext1, you would use it like
-  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK,ESP_EXT1_WAKEUP_ANY_LOW);
+  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK,ESP_EXT1_WAKEUP_ANY_HIGH);
 
-  delay(3000); //Take some time to open up the Serial Monitor
+  delay(3000);
 
   for(int x=0;x<3;x++)
   {
-	  digitalWrite(GPIO_ORANGE_LED,0);
+	  digitalWrite(GPIO_ORANGE_LED,1);
 	  delay(900);
 
-	  digitalWrite(GPIO_ORANGE_LED,1);
+	  digitalWrite(GPIO_ORANGE_LED,0);
 	  delay(100);
   }
 
@@ -97,17 +97,7 @@ void setup()
   Serial.println("Going to sleep now");
   esp_deep_sleep_start();
 
-
   Serial.println("This will never be printed");
-  for(int x=0;x<3;x++)
-  {
-	  digitalWrite(GPIO_ORANGE_LED,0);
-	  delay(500);
-
-	  digitalWrite(GPIO_ORANGE_LED,1);
-	  delay(500);
-  }
-
 }
 
 void loop(){
