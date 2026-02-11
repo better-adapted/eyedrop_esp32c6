@@ -58,8 +58,8 @@ void setup()
   pinMode(GPIO_RIGHT_BUTTON,INPUT);
   pinMode(GPIO_ORANGE_LED,OUTPUT);
 
-  pinMode(GPIO_PULLUP_ENA,OUTPUT);
-  digitalWrite(GPIO_PULLUP_ENA,0);
+  //pinMode(GPIO_PULLUP_ENA,OUTPUT);
+  //digitalWrite(GPIO_PULLUP_ENA,1);
 
   digitalWrite(GPIO_ORANGE_LED,0);
   delay(1000); //Take some time to open up the Serial Monitor
@@ -80,7 +80,7 @@ void setup()
   */
 
   //If you were to use ext1, you would use it like
-  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK,ESP_EXT1_WAKEUP_ANY_HIGH);
+  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK,ESP_EXT1_WAKEUP_ANY_LOW);
 
   delay(3000);
 
