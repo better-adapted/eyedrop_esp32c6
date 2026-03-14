@@ -21,12 +21,12 @@ For different SoCs, the related GPIOs are:
 - ESP32-H2: 7-14
 */
 
-#define BUTTON_PIN_BITMASK 0x0002
+#define BUTTON_PIN_BITMASK 0x00C0
 
-#define GPIO_LEFT_BUTTON	13
-#define GPIO_RIGHT_BUTTON	1
-#define GPIO_PULLUP_ENA		2
-#define GPIO_ORANGE_LED		15
+#define GPIO_LEFT_BUTTON	2
+#define GPIO_RIGHT_BUTTON	3
+#define GPIO_RED_LED		22
+#define GPIO_GREEN_LED		23
 
 RTC_DATA_ATTR int bootCount = 0;
 
@@ -52,18 +52,27 @@ void print_wakeup_reason(){
 
 void setup()
 {
+  //Go to sleep now
+//  Serial.println("Going to sleep now");
+//  esp_deep_sleep_start();
+
   Serial.begin(115200);
 
   pinMode(GPIO_LEFT_BUTTON,INPUT);
   pinMode(GPIO_RIGHT_BUTTON,INPUT);
-  pinMode(GPIO_ORANGE_LED,OUTPUT);
+  pinMode(GPIO_RED_LED,OUTPUT);
+  pinMode(GPIO_GREEN_LED,OUTPUT);
 
   //pinMode(GPIO_PULLUP_ENA,OUTPUT);
   //digitalWrite(GPIO_PULLUP_ENA,1);
 
-  digitalWrite(GPIO_ORANGE_LED,0);
+  digitalWrite(GPIO_GREEN_LED,1);
   delay(1000); //Take some time to open up the Serial Monitor
-  digitalWrite(GPIO_ORANGE_LED,1);
+  digitalWrite(GPIO_GREEN_LED,0);
+  delay(1000); //Take some time to open up the Serial Monitor
+  digitalWrite(GPIO_RED_LED,1);
+  delay(1000); //Take some time to open up the Serial Monitor
+  digitalWrite(GPIO_RED_LED,0);
 
   //Increment boot number and print it every reboot
   ++bootCount;
@@ -86,12 +95,16 @@ void setup()
 
   for(int x=0;x<3;x++)
   {
-	  digitalWrite(GPIO_ORANGE_LED,1);
+	  digitalWrite(GPIO_GREEN_LED,1);
 	  delay(900);
 
-	  digitalWrite(GPIO_ORANGE_LED,0);
+	  digitalWrite(GPIO_GREEN_LED,0);
 	  delay(100);
   }
+
+  digitalWrite(GPIO_RED_LED,1);
+  delay(1000); //Take some time to open up the Serial Monitor
+  digitalWrite(GPIO_RED_LED,0);
 
   //Go to sleep now
   Serial.println("Going to sleep now");
