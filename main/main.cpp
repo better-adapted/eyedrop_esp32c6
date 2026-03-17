@@ -21,7 +21,8 @@ For different SoCs, the related GPIOs are:
 - ESP32-H2: 7-14
 */
 
-#define BUTTON_PIN_BITMASK 0x00C0
+#define uS_TO_S_FACTOR 1000000ULL /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  30          /* Time ESP32 will go to sleep (in seconds) */
 
 #define GPIO_LEFT_BUTTON	2
 #define GPIO_RIGHT_BUTTON	3
@@ -53,8 +54,8 @@ void print_wakeup_reason(){
 void setup()
 {
   //Go to sleep now
-//  Serial.println("Going to sleep now");
-//  esp_deep_sleep_start();
+  //Serial.println("Going to sleep now");
+  //esp_deep_sleep_start();
 
   Serial.begin(115200);
 
@@ -67,16 +68,18 @@ void setup()
   //digitalWrite(GPIO_PULLUP_ENA,1);
 
   digitalWrite(GPIO_GREEN_LED,1);
-  delay(1000); //Take some time to open up the Serial Monitor
-  digitalWrite(GPIO_GREEN_LED,0);
-  delay(1000); //Take some time to open up the Serial Monitor
-  digitalWrite(GPIO_RED_LED,1);
-  delay(1000); //Take some time to open up the Serial Monitor
+  digitalWrite(GPIO_GREEN_LED,1);
+  delay(500); //Take some time to open up the Serial Monitor
   digitalWrite(GPIO_RED_LED,0);
+  digitalWrite(GPIO_RED_LED,0);
+  delay(500); //Take some time to open up the Serial Monitor
 
+#ifdef LED_FLASH
   //Increment boot number and print it every reboot
   ++bootCount;
+  Serial.println();
   Serial.println("Boot number: " + String(bootCount));
+  Serial.println();
 
   //Print the wakeup reason for ESP32
   print_wakeup_reason();
@@ -89,28 +92,36 @@ void setup()
   */
 
   //If you were to use ext1, you would use it like
-  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK,ESP_EXT1_WAKEUP_ANY_LOW);
 
-  delay(3000);
 
-  for(int x=0;x<3;x++)
+  delay(1000);
+
+  for(int x=0;x<5;x++)
   {
 	  digitalWrite(GPIO_GREEN_LED,1);
-	  delay(900);
+	  delay(100);
 
 	  digitalWrite(GPIO_GREEN_LED,0);
-	  delay(100);
+	  delay(900);
   }
 
   digitalWrite(GPIO_RED_LED,1);
+
   delay(1000); //Take some time to open up the Serial Monitor
   digitalWrite(GPIO_RED_LED,0);
 
   //Go to sleep now
-  Serial.println("Going to sleep now");
-  esp_deep_sleep_start();
+#endif
 
-  Serial.println("This will never be printed");
+  //esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  //Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
+
+  int res = esp_sleep_enable_ext1_wakeup(0b00001100,ESP_EXT1_WAKEUP_ANY_LOW);
+  Serial.println("\r\nesp_sleep_enable_ext1_wakeup() :" +  String(res));
+
+  Serial.println("Going to sleep now");
+  delay(100);
+  esp_deep_sleep_start();
 }
 
 void loop(){
