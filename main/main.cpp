@@ -113,8 +113,8 @@ void setup()
   //Go to sleep now
 #endif
 
-  //esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-  //Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  Serial.println("Setup ESP32 to sleep for every " + String(TIME_TO_SLEEP) + " Seconds");
 
   int res = esp_sleep_enable_ext1_wakeup(0b00001100,ESP_EXT1_WAKEUP_ANY_LOW);
   Serial.println("\r\nesp_sleep_enable_ext1_wakeup() :" +  String(res));
